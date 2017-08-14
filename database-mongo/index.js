@@ -75,6 +75,7 @@ module.exports.addRoles = function(token, playerRoles, callback) {
 
 module.exports.updateResults = function (token, roundResults, callback) {
 	Game.find({token}, (err, game) => {
+		console.log('got here')
 		var results = JSON.parse(game[0].results);
 		results.push(roundResults);
 		results = JSON.stringify(results);
