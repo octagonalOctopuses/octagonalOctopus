@@ -21,7 +21,11 @@ class App extends React.Component {
     super(props);
     this.state = {
 
-      pageID: 'WelcomeScreen',
+      // Especially while state is in development flux, it is
+      // important to ensure that state here and startState track each
+      // other.
+
+      pageID: 'GameOutcomeScreen',
 
       // These here for easy switching while developing
       //pageID: 'WelcomeScreen',
@@ -75,6 +79,25 @@ class App extends React.Component {
       // newButtonClickHandler: this.handleButtonClick,
       // joinButtonClickHandler: this.handleButtonClick,
     }
+
+    // This needs to zero out or restore to sane initial values *all*
+    // of the state. This will be a moving target as we develop so a
+    // likely pain point will be forgetting to undate some things,
+    // here. FixMe
+    this.startState = {
+      'pageID': 'WelcomeScreen',
+      'players': [],
+      'role': undefined,
+      'otherCharInfo': undefined,
+      'spyCount': undefined,
+      'accessCode': '234567',
+      'missonHistory': [null, null, null, null, null],
+      'missionPlayers': [],
+      'missionSize': undefined,
+      'failVotes': undefined,
+      'successVotes': undefined,
+    }
+
 
     // These bindings need to occur before the functions are
     // referenced in propsDispatch.
@@ -325,10 +348,11 @@ class App extends React.Component {
         joinButtonClickHandler:this.handleJoinButtonClick
       }
     }
+  }  // End of constructor. Flagged because stupid huge. FixMe Is it
+     // necessary it is so big?
 
 
-  }
-
+  // The first block of event handlers can be dealt with largely client side:
   handleNewButtonClick() {
     this.setState({'pageID': 'GameOwnerEnterNameScreen'})
   };
@@ -337,15 +361,31 @@ class App extends React.Component {
     this.setState({'pageID': 'PlayerEnterNameScreen'})
   };
 
+  handleBackButtonClick() {
+    this.setState({'pageID': 'WelcomeScreen'})
+  };
+
+  handleLeaveButtonClick() {
+    // FixMe The server needs to be informed that the client has left.
+    // Should this be by a POST or via the sockets?
+    this.setState({'pageID': 'WelcomeScreen'})
+  };
+
+  handleAgainButtonClick() {
+    this.setState(this.startState);
+    console.log("I CAN HAZ AGAIN CLICKS")
+    // Should likely also inform server, right? FixMe
+  };
+
+
+// End of largely client side event handlers
+
   handleCreateButtonClick() {console.log("I CAN HAZ CREATE CLICKS") };
-  handleBackButtonClick() {console.log("I CAN HAZ BACK CLICKS") };
-  handleLeaveButtonClick() {console.log("I CAN HAZ LEAVE CLICKS") };
   handleStartButtonClick() {console.log("I CAN HAZ START CLICKS") };
   handleFailMissionButtonClick() {console.log("I CAN HAZ FAIL CLICKS") };
   handlePassMissionButtonClick() {console.log("I CAN HAZ PASS CLICKS") };
   handleNextButtonClick() {console.log("I CAN HAZ NEXT CLICKS") };
   handleSubmitButtonClick() {console.log("I CAN HAZ SUBMIT CLICKS") };
-  handleAgainButtonClick() {console.log("I CAN HAZ AGAIN CLICKS") };
 
   componentDidMount() {
   }
