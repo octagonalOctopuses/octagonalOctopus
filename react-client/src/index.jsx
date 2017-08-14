@@ -21,7 +21,7 @@ class App extends React.Component {
     super(props);
     this.state = {
 
-      pageID: 'GameOutcomeScreen',
+      pageID: 'WelcomeScreen',
 
       // These here for easy switching while developing
       //pageID: 'WelcomeScreen',
