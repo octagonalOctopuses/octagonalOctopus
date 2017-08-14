@@ -11,7 +11,7 @@ class Timer extends React.Component {
 
     return (
       <div>
-      Some Timer Widget here      
+      Some Timer Widget here for {this.seconds} seconds
       </div>
       )
   }
