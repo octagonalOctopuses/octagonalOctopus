@@ -4,7 +4,7 @@ class PlayerEnterNameScreen extends React.Component {
 
   constructor(props) {
     super(props);
-  }
+  };
 
   render() {
 
@@ -34,5 +34,6 @@ class PlayerEnterNameScreen extends React.Component {
       </div>
       )};
 }
+
 
 export default PlayerEnterNameScreen;
