@@ -23,7 +23,6 @@ class App extends React.Component {
 
       pageID: 'WelcomeScreen',
 
-
       // These here for easy switching while developing
       //pageID: 'WelcomeScreen',
       //pageID: 'GameOwnerEnterNameScreen',
