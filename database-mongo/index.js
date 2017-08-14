@@ -34,7 +34,7 @@ module.exports.createGame = function(token, hostName, clientId, callback) {
 			callback(err);
 		} else {
 			var playerRoles = {};
-			playerIds[hostName] = clientId;
+			playerRoles[hostName] = clientId;
 			var playerIds = JSON.stringify(playerIds);
 			var results = [];
 			Game.update({token}, {playerIds, results}, (err) => {
