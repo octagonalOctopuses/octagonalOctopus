@@ -21,11 +21,13 @@ class App extends React.Component {
     super(props);
     this.state = {
 
+
       // Especially while state is in development flux, it is
       // important to ensure that state here and startState track each
       // other.
 
-      pageID: 'GameOutcomeScreen',
+      pageID: 'PlayerEnterNameScreen',
+
 
       // These here for easy switching while developing
       //pageID: 'WelcomeScreen',
@@ -110,6 +112,7 @@ class App extends React.Component {
     this.handleFailMissionButtonClick = this.handleFailMissionButtonClick.bind(this);
     this.handlePassMissionButtonClick = this.handlePassMissionButtonClick.bind(this);
     this.handleNextButtonClick = this.handleNextButtonClick.bind(this);
+    this.handlePlayerNameFormSubmitButtonClick = this.handlePlayerNameFormSubmitButtonClick.bind(this);
     this.handleSubmitButtonClick = this.handleSubmitButtonClick.bind(this);
     this.handleAgainButtonClick = this.handleAgainButtonClick.bind(this);
 
@@ -245,6 +248,7 @@ class App extends React.Component {
             <PlayerEnterNameScreen
           backButtonClickHandler={pObj.backButtonClickHandler}
           joinButtonClickHandler={pObj.joinButtonClickHandler}
+          submitButtonClickHandler={pObj.submitButtonClickHandler}
             />
         )},
 
@@ -336,7 +340,8 @@ class App extends React.Component {
 
       'PlayerEnterNameScreen':  {
         backButtonClickHandler:this.handleBackButtonClick,
-        joinButtonClickHandler:this.handleJoinButtonClick
+        joinButtonClickHandler:this.handleJoinButtonClick,
+        'submitButtonClickHandler': this.handlePlayerNameFormSubmitButtonClick,
       },
 
       'PlayerWaitingForPlayersScreen': {
@@ -348,11 +353,13 @@ class App extends React.Component {
         joinButtonClickHandler:this.handleJoinButtonClick
       }
     }
+
   }  // End of constructor. Flagged because stupid huge. FixMe Is it
      // necessary it is so big?
 
 
   // The first block of event handlers can be dealt with largely client side:
+
   handleNewButtonClick() {
     this.setState({'pageID': 'GameOwnerEnterNameScreen'})
   };
@@ -385,7 +392,20 @@ class App extends React.Component {
   handleFailMissionButtonClick() {console.log("I CAN HAZ FAIL CLICKS") };
   handlePassMissionButtonClick() {console.log("I CAN HAZ PASS CLICKS") };
   handleNextButtonClick() {console.log("I CAN HAZ NEXT CLICKS") };
-  handleSubmitButtonClick() {console.log("I CAN HAZ SUBMIT CLICKS") };
+
+  handlePlayerNameFormSubmitButtonClick(event) {
+    alert("SABMUT");
+    console.log(Object.keys(event.target), typeof event.target, event.target, 7777);
+    event.preventDefault();
+  };
+
+  handleSubmitButtonClick(event) {
+    alert(Object.keys(event));
+    console.log("I CAN HAZ SUBMIT CLICKS");
+    event.preventDefault();
+  };
+
+  handleAgainButtonClick() {console.log("I CAN HAZ AGAIN CLICKS") };
 
   componentDidMount() {
   }
