@@ -5,6 +5,15 @@ class GameOwnerEnterNameScreen extends React.Component {
   constructor(props) {
     super(props);
 
+    this.state = {
+      nameFormValue: '',
+    }
+
+    this.handleNameChange = this.handleNameChange.bind(this);
+  }
+
+  handleNameChange(event) {
+    this.setState({nameFormValue: event.target.value});
   }
 
   render() {
@@ -17,14 +26,15 @@ class GameOwnerEnterNameScreen extends React.Component {
         I do not presently know how to deal with the html form
 
         <form >
-        <input type="text" name="Name" value="Enter name"/>
+        <input
+      type="text"
+      name="Name"
+      value={this.state.accessCodeFormValue}
+      onChange={this.handleAccessCodeChange}
+        />
 
         <input type="submit" value="Submit"/>
         </form>
-
-        <button onClick={this.props.createButtonClickHandler}>
-        {'Create'}
-        </button>
 
         <button onClick={this.props.backButtonClickHandler}>
         {'Back'}
