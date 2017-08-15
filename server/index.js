@@ -76,45 +76,4 @@ var port =  process.env.PORT || 3000;
 
 app.listen(port, () => {
   console.log('listening to port 3000');
-  database.removeAllGames(() => {
-    database.createGame('12345', 'host', 'aaaa', () => {
-      database.addPlayer('12345', 'player1', 'bbbb', () => {
-        database.addRoles('12345', {'host': 'Spy1', 'player1': 'Merlin'}, () => {
-          database.removePlayer('12345', 'player1', () => {
-            database.updateResults('12345', [false, false, true], () => {
-              database.getMerlin('12345', (merlin) => {
-                console.log(merlin, 'Merlin');
-              })
-              database.getPlayerRoleMapping('12345', (playerRoles) => {
-                console.log(playerRoles, 'playerRoles');
-              })
-              database.selectGame('12345', (game) => {
-                console.log(game, 'game object');
-              })
-            })
-          })
-        })  
-      })
-    })
-  })
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

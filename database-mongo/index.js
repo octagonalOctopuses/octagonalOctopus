@@ -16,10 +16,10 @@ var games = mongoose.Schema({
   token: {type: String, required: true},	
   playerRoles: String,
   results: String, 
-  playerIds: String,
+  playerIds: String, //TODO: should be clientid to role mapping
 });
 
-Game = mongoose.model('Game', games);
+var Game = mongoose.model('Game', games);
 
 module.exports.selectGame = function(token, callback) {
   Game.find({token}, (err, game) => {
@@ -75,13 +75,12 @@ module.exports.addRoles = function(token, playerRoles, callback) {
 
 module.exports.updateResults = function (token, roundResults, callback) {
 	Game.find({token}, (err, game) => {
-		console.log('got here')
 		var results = JSON.parse(game[0].results);
 		results.push(roundResults);
 		results = JSON.stringify(results);
 		Game.update({token}, {results}, (err) => {
 			callback(err);
-		})
+		});
 	});
 };
 
@@ -93,15 +92,15 @@ module.exports.getPlayerRoleMapping = function(token, callback) {
 	Game.find({token}, (err, game) => {
 		var playerRoles = JSON.parse(game[0].playerRoles);
 		callback(playerRoles); //object with key as username and value as role
-	})
-}
+	});
+};
 
 module.exports.getPlayerIdMapping = function(token, callback) {
 	Game.find({token}, (err, game) => {
 		var playerId = JSON.parse(game[0].playerIds);
 		callback(playerId); //object with key as username and value as playerId
-	})
-}
+	});
+};
 
 
 module.exports.getMerlin = function(token, callback) {
@@ -111,19 +110,5 @@ module.exports.getMerlin = function(token, callback) {
 				callback(prop); // returns callback with Merlin's username as argument
 			}
 		}
-	})
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	});
+};
