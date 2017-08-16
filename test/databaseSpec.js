@@ -41,7 +41,7 @@ describe('addPlayer', function() {
 
 describe('removePlayer', function() {
   it('should remove a player into game document', function(done) {
-    database.removePlayer('12345', 'player1', () => {
+    database.removePlayer('12345', 'bbbbb', () => {
       database.selectGame('12345', (game) => {
         assert.equal(JSON.parse(game.playerIds).player1,  undefined);
         done();

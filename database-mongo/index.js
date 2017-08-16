@@ -17,6 +17,7 @@ var games = mongoose.Schema({
   playerRoles: String,
   results: String, 
   playerIds: String, //TODO: should be clientid to role mapping
+	hostId: String,
 });
 
 var Game = mongoose.model('Game', games);
@@ -35,9 +36,10 @@ module.exports.createGame = function(token, hostName, clientId, callback) {
 			var playerIds = {};
 			playerIds[hostName] = clientId;
 			playerIds = JSON.stringify(playerIds);
+			var hostId = clientId;
 			var results = [];
 			results = JSON.stringify(results);
-			Game.update({token}, {playerIds, results}, (err) => {
+			Game.update({token}, {playerIds, results, hostId}, (err) => {
 				callback(err);
 			});
 		}
@@ -55,10 +57,14 @@ module.exports.addPlayer = function(token, playerName, clientId, callback) {
 	});
 };
 
-module.exports.removePlayer = function(token, playerName, callback) {
+module.exports.removePlayer = function(token, playerId, callback) {
 	Game.find({token}, (err, game) => {
 		var playerIds = JSON.parse(game[0].playerIds);
-		delete playerIds[playerName];
+		for (var prop in playerIds) {
+			if (playerIds[prop] === playerId) {
+				delete playerIds[prop];
+			}
+		} 
 		playerIds = JSON.stringify(playerIds);
 		Game.update({token}, {playerIds}, (err) => {
 			callback(err);
@@ -112,3 +118,10 @@ module.exports.getMerlin = function(token, callback) {
 		}
 	});
 };
+
+module.exports.getHost = function(token, callback) {
+	Game.find({token}, (err, game) => {
+		callback(game[0].hostId);
+	})
+}
+

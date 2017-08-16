@@ -1,39 +1,48 @@
 var express = require('express');
 var app = express();
 var server = require('http').createServer(app);
+var io = require('socket.io')(server);
 
 var bodyParser = require('body-parser');
+
 var helpers = require('./helper-functions');
-
-var io = require('socket.io')(server);
 var database = require('../database-mongo');
-
 io.on('connection', (socket) => {
-  console.log('hello');
-  socket.emit('test', {testdata: 'data'})
-
 
   socket.on('join', (data) => {
-    console.log(data.room);
-    // socket.join(roomname)
-    // write to document in database
-    // database should store username and client id mapping
-    // broadcast to players in game that new player joined
+    socket.join(data.roomname);
+    database.addPlayer(data.roomname, data.username, socket.id, () => {
+      database.getPlayerIdMapping(data.roomname, (playerId) => {
+        var players = [];
+        for (var prop in playerId) {
+          players.push(prop);
+        }
+        console.log(players, 'join');
+        io.in(data.roomname).emit('updateState', {players});
+      })
+    });
   });
 
   socket.on('create', (data) => {
-    // create random roomtoken
-    // create game in database and add this client
-    // socket.join(roomname)
-    // return the token to the client
-    // store client id in an object with key as username
-    // database should store username and client id mapping
+    var accessCode = '0c927' //helpers.generateToken();
+    socket.join(accessCode);
+    var pageID = 'GameOwnerWaitingForPlayersScreen'
+    database.createGame(accessCode, data.username, socket.id, () => {
+      socket.emit('updateState', {accessCode, pageID});
+    });
   });
   
-  socket.on('leave', (data) => {
-    // socket.leave(roomname);
-    // remove client from database
-    // 
+  socket.on('disconnected', () => {
+    module.exports.removePlayer(socket.rooms[0], socket.id, () =>{
+      database.getPlayerIdMapping(socket.room[0], (playerId) => {
+        var players = [];
+        for (var prop in playerId) {
+          players.push(prop);
+        }
+        console.log(players, 'leave');
+        io.in(socket.rooms[0]).emit('updateState', {players});
+      });
+    });
   });
   
   socket.on('start game', (data) => {
@@ -74,6 +83,6 @@ app.use(express.static(__dirname + '/../react-client/dist'));
 var port =  process.env.PORT || 3000;
 
 
-app.listen(port, () => {
+server.listen(port, () => {
   console.log('listening to port 3000');
 });
