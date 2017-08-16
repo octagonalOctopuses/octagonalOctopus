@@ -20,7 +20,7 @@ class MissionVoteScreen extends React.Component {
     // will wrongly be included in the list of players on the mission.
     // Fixme
 
-    var pString = props.players.join(', and ');
+    var pString = this.props.players.join(', and ');
     if (this.props.players.length === 2) {
       // Remove oxford comma in case of only two
       pString = this.props.players.join(' and ');
