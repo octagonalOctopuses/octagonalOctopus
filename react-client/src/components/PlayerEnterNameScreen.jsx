@@ -13,7 +13,8 @@ class PlayerEnterNameScreen extends React.Component {
 
     this.handleNameChange = this.handleNameChange.bind(this);
     this.handleAccessCodeChange = this.handleAccessCodeChange.bind(this);
-//    this.handleSubmit = this.handleSubmit.bind(this);
+   this.handleSubmit = this.handleSubmit.bind(this);
+   this.socketUserInfo= this.socketUserInfo.bind(this);
   }
 
   handleNameChange(event) {
@@ -23,6 +24,14 @@ class PlayerEnterNameScreen extends React.Component {
   handleAccessCodeChange(event) {
     this.setState({accessCodeFormValue: event.target.value});
   }
+  handleSubmit(event) {
+    event.preventDefault();
+  }
+
+  socketUserInfo(event) {
+    this.props.getuserinfo({username: this.state.nameFormValue,
+                            roomname: this.state.accessCodeFormValue});
+  }
 
   render() {
 
@@ -31,9 +40,9 @@ class PlayerEnterNameScreen extends React.Component {
 
         <h2> Join a Game of Defintely Not Avalon </h2>
 
-      I do not presently know how to deal with the html form
+      
 
-        <form onSubmit={this.props.submitButtonClickHandler}>
+        <form onSubmit={this.handleSubmit}>
         <input
       type="text"
       name="Token"
@@ -50,16 +59,14 @@ class PlayerEnterNameScreen extends React.Component {
       onChange={this.handleNameChange}
         />
 
-        <input type="submit" value="Submit"/>
+        <input type="submit" value="Join" onClick={this.socketUserInfo}/>
         </form>
 
         <button onClick={this.props.backButtonClickHandler}>
         {'Back'}
         </button>
 
-        <button onClick={this.props.joinButtonClickHandler}>
-        {'Join'}
-        </button>
+     
 
       </div>
       )};

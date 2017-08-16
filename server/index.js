@@ -7,28 +7,43 @@ var helpers = require('./helper-functions');
 
 var io = require('socket.io')(server);
 var database = require('../database-mongo');
+app.use(express.static(__dirname + '/../react-client/dist'));
 
-io.on('connection', (socket) => {
-  console.log('hello');
-  socket.emit('test', {testdata: 'data'})
+var port =  process.env.PORT || 3000;
 
 
-  socket.on('join', (data) => {
-    console.log(data.room);
+server.listen(port, () => {
+  console.log('listening to port 3000');
+});
+
+// io.on('connection', (socket) => {
+//   console.log(socket.id);
+//   console.log('hello *** abhi ****');
+  
+//   //socket.emit('test', {testdata: 'data'});
+//  socket.on('create', (data)=>{
+//   console.log(data);
+//     });
+ 
+//   socket.on('join', (data) => {
+//     console.log(data);
     // socket.join(roomname)
     // write to document in database
     // database should store username and client id mapping
     // broadcast to players in game that new player joined
-  });
+  // });
 
-  socket.on('create', (data) => {
-    // create random roomtoken
-    // create game in database and add this client
-    // socket.join(roomname)
-    // return the token to the client
-    // store client id in an object with key as username
-    // database should store username and client id mapping
-  });
+
+  // socket.on('create', (data) => {
+  //   console.log('hiiiiii');
+  //   socket.emit('hiii');
+  //   // create random roomtoken
+  //   // create game in database and add this client
+  //   // socket.join(roomname)
+  //   // return the token to the client
+  //   // store client id in an object with key as username
+  //   // database should store username and client id mapping
+  // });
   
   socket.on('leave', (data) => {
     // socket.leave(roomname);
@@ -65,15 +80,11 @@ io.on('connection', (socket) => {
   
 });
 
-app.use(express.static(__dirname + '/../react-client/dist'));
-
-// app.get('/', function (req, res) {
-//   // serve up static files for login
-// });
-
-var port =  process.env.PORT || 3000;
 
 
-app.listen(port, () => {
-  console.log('listening to port 3000');
+app.get('/', function (req, res) {
+  // serve up static files for login
+  res.send();
 });
+
+
