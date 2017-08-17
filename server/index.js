@@ -11,15 +11,16 @@ io.on('connection', (socket) => {
 
   socket.on('join', (data) => {
     socket.join(data.roomname);
-    database.addPlayer(data.roomname, data.username, socket.id, () => {
-      database.getPlayerIdMapping(data.roomname, (playerId) => {
-        var players = [];
-        for (var prop in playerId) {
-          players.push(prop);
-        }
-        console.log(players, 'join');
-        io.in(data.roomname).emit('updateState', {players});
-      })
+    database.createPlayer(data.roomname, socket.id, () => {
+      database.addPlayer(data.roomname, data.username, socket.id, () => {
+        database.getPlayerIdMapping(data.roomname, (playerId) => {
+          var players = [];
+          for (var prop in playerId) {
+            players.push(prop);
+          }
+          io.in(data.roomname).emit('updateState', {players});
+        });
+      });
     });
   });
 
@@ -27,29 +28,42 @@ io.on('connection', (socket) => {
     var accessCode = '0c927' //helpers.generateToken();
     socket.join(accessCode);
     var pageID = 'GameOwnerWaitingForPlayersScreen'
-    database.createGame(accessCode, data.username, socket.id, () => {
-      socket.emit('updateState', {accessCode, pageID});
+    database.createPlayer(accessCode, socket.id, () => {
+      database.createGame(accessCode, data.username, socket.id, () => {
+        socket.emit('updateState', {accessCode, pageID});
+      });
     });
   });
   
-  socket.on('disconnected', () => {
-    module.exports.removePlayer(socket.rooms[0], socket.id, () =>{
-      database.getPlayerIdMapping(socket.room[0], (playerId) => {
-        var players = [];
-        for (var prop in playerId) {
-          players.push(prop);
-        }
-        console.log(players, 'leave');
-        io.in(socket.rooms[0]).emit('updateState', {players});
+  socket.on('disconnect', () => {
+    database.findPlayer(socket.id, (player) => {
+      database.removePlayer(player[0].gameToken, socket.id, () =>{
+        database.getPlayerIdMapping(player[0].gameToken, (playerId) => {
+          var players = [];
+          for (var prop in playerId) {
+            players.push(prop);
+          }
+          io.in(player[0].gameToken).emit('updateState', {players}); //test at integration level
+        });
       });
     });
   });
   
   socket.on('start game', (data) => {
-    // retrieve all saved players from database
-    // call random role generating function
-    // store roles into database
-    // send out individual emits to each client depending on role
+    database.getPlayerIdMapping(data.roomname, (playerId) => {
+      var playerUsername = [];
+      for (var prop in playerId) {
+        playerUsername.push(prop);
+      }
+      var roles = helpers.generateRoles(playerUsername);
+      database.addRoles(data.roomname, roles, () => {
+        database.getPlayerIdMapping(data.roomname, (playerId) => {
+          for (var i = 0; i < playerUsername.length; i++) {
+            socket.to(playerId[playerUsername[i]]).emit('updateState', {role: roles[playerUsername[i]]})
+          }
+        })
+      })
+    });
   });
   
   socket.on('mission participants', (data) => {

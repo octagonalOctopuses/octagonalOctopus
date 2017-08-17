@@ -20,7 +20,33 @@ var games = mongoose.Schema({
 	hostId: String,
 });
 
+var players = mongoose.Schema({
+	playerId: String,
+	gameToken: String,
+});
+
 var Game = mongoose.model('Game', games);
+var Player = mongoose.model('Player', players)
+
+module.exports.createPlayer = function(gameToken, playerId, callback) {
+	Player.create({playerId}, (err) => {
+		Player.update({playerId}, {gameToken}, (err) => {
+			callback(err);
+		});
+	});
+};
+
+module.exports.findPlayer = function(playerId, callback) {
+	Player.find({playerId}, (err, player) => {
+		callback(player);
+	});
+};
+
+module.exports.deletePlayer = function(playerId, callback) {
+	Player.remove({playerId}, (err) => {
+		callback(err);
+	});
+};
 
 module.exports.selectGame = function(token, callback) {
   Game.find({token}, (err, game) => {

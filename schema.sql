@@ -1,15 +1,15 @@
 DROP DATABASE IF EXISTS test;
 
-CREATE DATABASE test;
+CREATE DATABASE Avalon;
 
-USE test;
+USE Avalon;
 
-CREATE TABLE items (
-  id int NOT NULL AUTO_INCREMENT,
-  quantity integer NOT NULL,
-  description varchar(50) NOT NULL,
-  PRIMARY KEY (z)
-);
+-- CREATE TABLE games (
+--   id string NOT NULL ,
+--   quantity integer NOT NULL,
+--   description varchar(50) NOT NULL,
+--   PRIMARY KEY (z)
+-- );
 
 /*  Execute this file from the command line by typing:
  *    mysql -u root < server/schema.sql
