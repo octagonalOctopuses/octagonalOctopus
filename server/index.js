@@ -6,20 +6,15 @@ var io = require('socket.io')(server);
 var bodyParser = require('body-parser');
 
 var helpers = require('./helper-functions');
-var database = require('../database-mongo');
+var database = require('../database-mysql');
 io.on('connection', (socket) => {
 
   socket.on('join', (data) => {
     socket.join(data.roomname);
-    database.createPlayer(data.roomname, socket.id, () => {
-      database.addPlayer(data.roomname, data.username, socket.id, () => {
-        database.getPlayerIdMapping(data.roomname, (playerId) => {
-          var players = [];
-          for (var prop in playerId) {
-            players.push(prop);
-          }
-          io.in(data.roomname).emit('updateState', {players});
-        });
+    database.addPlayer(data.roomname, false, data.username, socket.id, () => {
+      database.getAllUsernames(data.roomname, (players) => {
+        var pageID = 'PlayerWaitingForPlayersScreen'
+        io.in(data.roomname).emit('updateState', {players, pageID})
       });
     });
   });
@@ -27,65 +22,126 @@ io.on('connection', (socket) => {
   socket.on('create', (data) => {
     var accessCode = '0c927' //helpers.generateToken();
     socket.join(accessCode);
-    var pageID = 'GameOwnerWaitingForPlayersScreen'
-    database.createPlayer(accessCode, socket.id, () => {
-      database.createGame(accessCode, data.username, socket.id, () => {
-        socket.emit('updateState', {accessCode, pageID});
+    database.createGame(accessCode, () => {
+      var players = [data.username];
+      database.addPlayer(accessCode, true, data.username, socket.id, () => {
+        var pageID = 'GameOwnerWaitingForPlayersScreen'
+        socket.emit('updateState', {accessCode, players, pageID});
       });
     });
   });
   
   socket.on('disconnect', () => {
-    database.findPlayer(socket.id, (player) => {
-      database.removePlayer(player[0].gameToken, socket.id, () =>{
-        database.getPlayerIdMapping(player[0].gameToken, (playerId) => {
-          var players = [];
-          for (var prop in playerId) {
-            players.push(prop);
-          }
-          io.in(player[0].gameToken).emit('updateState', {players}); //test at integration level
-        });
+    database.removePlayer(socket.id, (gameToken) => {
+      database.getAllUsernames(gameToken, (players) => {
+        io.in(gameToken).emit('updateState', {players})
       });
     });
   });
   
   socket.on('start game', (data) => {
-    database.getPlayerIdMapping(data.roomname, (playerId) => {
-      var playerUsername = [];
-      for (var prop in playerId) {
-        playerUsername.push(prop);
-      }
-      var roles = helpers.generateRoles(playerUsername);
-      database.addRoles(data.roomname, roles, () => {
-        database.getPlayerIdMapping(data.roomname, (playerId) => {
-          for (var i = 0; i < playerUsername.length; i++) {
-            socket.to(playerId[playerUsername[i]]).emit('updateState', {role: roles[playerUsername[i]]})
+    database.updateVotesAndParticipantNum(data.roomname, () => {
+      database.getAllSocketIds(data.roomname, (socketids) => {
+        var roles = helpers.generateRoles(socketids);
+        database.getHost(data.roomname, (host) => {
+          var pageID = 'EnterMissionPlayersScreen';
+          var role = roles[host.socketid];
+          socket.to(host.socketid).emit('updateState', {role, pageID});
+          for (var i = 0; i < socketids.length; i++) {
+            if (socketid[i] !== host.socketid) {
+              var role = roles[socketids[i]];
+              var pageID = 'DiscussMissionPlayersScreen';
+              socket.to(socketids[i]).emit('updateState', {role, pageID});
+            }
           }
-        })
-      })
+          });
+        });
+      });
     });
   });
-  
+
   socket.on('mission participants', (data) => {
-    // find client id of mission participants
-    // emit something so frontend knows to render vote page
-    // emit static page for those not participating
+    for (var i = 0; i < data.participants; i++) {
+      var participantsockets = [];
+      database.getSocketId(data.participants[i], (socketid) => {
+        participantsockets.push(socketid);
+        socket.to(socketid).emit('updateState', {pageID: 'MissionVoteScreen'});
+      });
+    }
+    database.getAllSocketIds(data.roomname, (socketids) => {
+      for (var i = 0; i < socketids; i++) {
+        if (data.participants.indexOf(socketids[i]) === -1) {
+          socket.to(socketids[i]).emit('updateState', {pageID: 'AwaitMissionOutcomeScreen'})
+        }
+      }
+    });
   });
+
+    const computeResult = (data, callback) => {
+    database.addVotes(data.roomname, data.vote, (votesArray) => {
+      database.votesNeeded(data.roomname, (votesNeeded) => {
+        if (votesArray.length === votesNeeded) {
+          database.votingInfo(data.roomname, (numPlayers, missionNumber) => {
+            var result = helpers.missionResults(numPlayers, missionNumber, votesArray); // need a change from helper function
+            callback(result);
+          });
+        }
+      });
+    });
+  };
+
   
   socket.on('mission votes', (data) => {
-    // call helper function to determine whether failed or succeeded
-    // emit to all players the result
-    // store the result to the result array in database
-    // if last round, check if good people won. If so, socket emit to only assassin to enter merlin
-    // otherwise, emit to everyone all data results
+    computeResult(data, (result) => {
+      database.updateResults(data.roomname, result, () => {
+        database.getResults(data.roomname, (results) => {
+          if (results.length < 5) {
+            database.getHost(data.roomname, (host) => {
+              var pageID = 'EnterMissionPlayersScreen';
+              var role = roles[host.socketid];
+              socket.to(host.socketid).emit('updateState', {results, pageID});
+              database.getAllSocketIds(data.roomname, (socketids) => {
+                for (var i = 0; i < socketids.length; i++) {
+                  if (socketid[i] !== host.socketid) {
+                    var role = roles[socketids[i]];
+                    var pageID = 'DiscussMissionPlayersScreen';
+                    socket.to(socketids[i]).emit('updateState', {results, pageID});
+                  }
+                }
+              })
+            });
+          } else {
+            var finalOutcome = helpers.gameOutcome(results);
+            if (finalOutcome) {
+              database.getMordred(data.roomname, (mordred) => {
+                var pageID = 'MerlinChoiceScreen'
+                socket.to(mordred.socketid).emit('updateState', {pageID});
+              })
+              database.getAllSocketIds(data.roomname, (socketids) => {
+                for (var i = 0; i < socketids.length; i++) {
+                  if (socketid[i] !== mordred.socketid) {
+                    var role = roles[socketids[i]];
+                    var pageID = 'AwaitAssassinScreen';
+                    socket.to(socketids[i]).emit('updateState', {pageID});
+                  }
+                }
+              });
+            }
+          }
+        });
+      });
+    });
   });
+
   
   socket.on('entered merlin', (data) => {
-    // check if guess is correct
-    // if so, send success and all other data
-    // otherwise, send failure and all other data
+    database.getMerlin(data.roomname, (merlin) => {
+      database.getResults(data.roomname, (results) => {
+        var merlinGuessed = (merlin.username === data.merlin);
+        io.in(data.roomname).emit('updateState', {results, merlinGuessed}) //FIXME
+      });
+    });
   });
-  
 });
 
 app.use(express.static(__dirname + '/../react-client/dist'));
