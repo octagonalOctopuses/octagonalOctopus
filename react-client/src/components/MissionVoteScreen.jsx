@@ -29,7 +29,7 @@ class MissionVoteScreen extends React.Component {
 
         <InfoPanel role={this.props.role} missionHistory={this.props.history}  extraInfo = {this.props.extraInfo}/>
 
-        
+
         <p> You are on a mission with</p>
         <table >
         {this.props.missionPlayers.map((player, index)=>{
@@ -41,12 +41,12 @@ class MissionVoteScreen extends React.Component {
         Do you want the mission to fail or succeed?
         </p>
         <div className="missionVoteScreenInput">
-          <button onClick={this.fail}>
-            Mission Fails!
+          <button className="missionFail" onClick={this.fail}>
+            Fails
           </button>
 
-          <button onClick={this.succeed}>
-            Mission Succeeds!
+          <button className="missionSucceed" onClick={this.succeed}>
+            Succeeds
           </button>
         </div>
 

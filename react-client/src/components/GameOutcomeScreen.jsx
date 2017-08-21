@@ -32,7 +32,7 @@ class GameOutcomeScreen extends React.Component {
 
     return (
 
-      <div>
+      <div id="gameOutcomeScreen">
 
         <h5> Game Outcome  </h5>
 
@@ -48,7 +48,7 @@ class GameOutcomeScreen extends React.Component {
        }
        </ul>
 
-      
+
 
         <button onClick={this.newGame}>
         {'Play Again'}

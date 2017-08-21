@@ -25,6 +25,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  /*margin-top: 80px;*/
   width: 50%;
   padding: 20px;
   background: #00001a;
@@ -37,28 +38,12 @@ body {
 /* Most components and inputs within components will have these styles */
 #welcomeScreen, #playerEnterNameScreen, #playerEnterNameScreenInput,
 #gameOwnerEnterNameScreen, #gameOwnerEnterNameScreenInput,
-#gameOwnerWaitingForPlayersScreen, #missionVoteScreen, #playerWaitingForPlayersScreen {
+#gameOwnerWaitingForPlayersScreen, #enterMissionPlayersScreen,
+#missionVoteScreen, #missionOutcome, #playerWaitingForPlayersScreen {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
-
-/*#welcomeScreen h2 {
-  padding: 5px;
-  border-radius: 20px;
-  border-width: 2px;
-}*/
-
-/*#playerEnterNameScreen {
-  display: flex;
-  flex-direction: column;
-}*/
-
-/*#playerEnterNameScreenInput, #gameOwnerEnterNameScreenInput {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}*/
 
 #playerEnterNameScreenInput .playerEnterNameScreenForm, #gameOwnerEnterNameScreenInput .gameOwnerEnterNameScreenForm  {
   display: flex;
@@ -93,8 +78,12 @@ body {
   align-self: center;
 }
 
-#missionSelection {
+#missionSelection, #gameOutcomeScreen ul {
   list-style-type: none;
+}
+
+#enterMissionPlayersScreen button {
+  align-self: center;
 }
 
 #notEnoughPlayersErr {
@@ -109,44 +98,29 @@ body {
   text-align: center;
 }
 
-.missionFail {
-  color: red;
+#awaitMissionOutcomeScreen {
+  text-align: center;
 }
 
-.missionPass {
+#infoPanel {
+  padding: 10px;
+  border-width: 2px;
+  border-color: black;
+}
+
+#gameOutcomeScreen {
+  text-align: center;
+}
+
+.missionSucceed {
+  align-self: center;
   color: green;
 }
 
-/*#gameOwnerEnterNameScreen {
-  display: flex;
-  flex-direction: column;
-
-}*/
-
-/*#gameOwnerEnterNameScreenInput {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}*/
-
-/*#gameOwnerEnterNameScreenInput .gameOwnerEnterNameScreenForm {
-  display: flex;
-  order: 1;
-}*/
-
-/*#gameOwnerEnterNameScreenInput .backButton {
-  align-self: flex-start;
-  margin-top: 15px;
-  order: 2;
-}*/
-
-
-
-/*.backButton {
-  margin: 5px;
-  width: 50px;
-  text-align: center;
-}*/
+.missionFail {
+  align-self: center;
+  color: red;
+}
 
 p {
   text-align: left;
@@ -201,14 +175,3 @@ button {
 button:hover, .submit:hover {
   color: blue;
 }
-
-/*button {
-  padding: 5px;
-  margin: 5px;
-  width: 100px;
-  height: 30px;
-  font-size: 12px;
-  border-radius: 7px;
-  text-align: center;
-  align-self: center;
-}*/

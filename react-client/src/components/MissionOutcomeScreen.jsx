@@ -14,7 +14,7 @@ class MissionOutcomeScreen extends React.Component {
   render() {
 
     return (
-      <div>
+      <div id="missionOutcome">
 
         <h4> Mission Outcome  </h4>
 

@@ -72,27 +72,6 @@ module.exports.generateRoles = (usernames) => {
   return userRoles;
 };
 
-module.exports.merlinGuessResult = (token, merlinGuess, testCallback) => {
-  // callback is for testing purposes
-  // query database for real merlin
-  // return true or false
-
-  // Callback for getMerlin
-
-  // let merlinGuessResult = (realMerlin) => {
-  //   let result = realMerlin === merlinGuess
-  //   // if test callback exists pass in result, otherwise do nothing.
-  //   testCallback !== undefined ? testCallback(result) : false;
-  //   return result;
-  // }
-  // let getResults = new Promise((resolve, reject) => {
-  //   resolve(db.getMerlin(token, merlinGuessResult));
-  // })
-  // .then(resolve => {
-  //   return resolve;
-  // })
-};
-
 module.exports.gameOutcome = (missionResults) => {
   // given mission results array, determine if good people won (true)
 
@@ -124,8 +103,13 @@ module.exports.extraInfoAssignment = (userRoleMapping) => {
       extraInfo[userRoleMapping[prop][1]] = shpies;
     } else if (prop === 'Morgana') {
       merlinAndMorgana.push(userRoleMapping[prop][0]);
+      extraInfo[userRoleMapping[prop][1]] = spies;
+      shpies.push(userRoleMapping[prop][0]);
+      spies.push(userRoleMapping[prop][0]);
     } else if (prop === 'Percival') {
       extraInfo[userRoleMapping[prop][1]] = merlinAndMorgana;
+    } else if (prop === 'Oberon') {
+      shpies.push(userRoleMapping[prop][0]);
     }
   }
   return extraInfo;

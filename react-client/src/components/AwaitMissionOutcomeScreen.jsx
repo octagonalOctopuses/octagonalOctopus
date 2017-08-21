@@ -12,7 +12,7 @@ class AwaitMissionOutcomeScreen extends React.Component {
   render() {
 
     return (
-      <div>
+      <div id="awaitMissionOutcomeScreen">
 
         <h3> Awaiting Mission Outcome </h3>
 
@@ -20,8 +20,8 @@ class AwaitMissionOutcomeScreen extends React.Component {
 
         <p></p>
 
-        
-        
+
+
       </div>
     )}
 }

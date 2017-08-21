@@ -42,30 +42,33 @@ class PlayerEnterNameScreen extends React.Component {
       <div id="playerEnterNameScreen">
 
         <h2> Join a Game of Defintely Not Avalon </h2>
-        <div className="playerEnterNameScreenForm">
-          <form onSubmit={this.handleSubmit}>
-            <input
-              type="text"
-              name="Token"
-              placeholder="Enter Access Token"
-              value={this.state.accessCodeFormValue}
-              onChange={this.handleAccessCodeChange}
-              />
 
-            <input
-              type="text"
-              name="Name"
-              placeholder="Your Name"
-              value={this.state.nameFormValue}
-              onChange={this.handleNameChange}
-              />
+        <div className="playerEnterNameScreenInput">
+          <div className="playerEnterNameScreenForm">
+            <form onSubmit={this.handleSubmit}>
+              <input
+                type="text"
+                name="Token"
+                placeholder="Enter Access Token"
+                value={this.state.accessCodeFormValue}
+                onChange={this.handleAccessCodeChange}
+                />
 
-            <input type="submit" value="Join" onClick={this.socketUserInfo}/>
-          </form>
+              <input
+                type="text"
+                name="Name"
+                placeholder="Your Name"
+                value={this.state.nameFormValue}
+                onChange={this.handleNameChange}
+                />
 
-          <button className="backButton" onClick={this.backtoWelcome}>
-            Back
-          </button>
+              <input type="submit" value="Join" onClick={this.socketUserInfo}/>
+            </form>
+          </div>
+
+            <button className="backButton" onClick={this.backtoWelcome}>
+              Back
+            </button>
         </div>
       </div>
       )};
