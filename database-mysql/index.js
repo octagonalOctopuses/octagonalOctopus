@@ -9,7 +9,7 @@ const numPeopleOnMission = {
   10: [3,4,4,5,5]
 }
 
-const sequelize = new Sequelize('Avalon', 'bd15c87a7f7db4', '276468f5', {
+const sequelize = new Sequelize('heroku_7f49c0a1546da7b', 'bd15c87a7f7db4', '276468f5', {
   host: 'us-cdbr-iron-east-05.cleardb.net',
   dialect: 'mysql'
 });
