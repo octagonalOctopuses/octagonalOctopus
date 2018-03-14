@@ -11,7 +11,7 @@ const numPeopleOnMission = {
 
 const sequelize = new Sequelize('Avalon', 'root', '', {
   host: 'localhost',
-  dialect: 'mysql',
+  dialect: 'mysql'
 });
 
 const User = sequelize.define('user', {
