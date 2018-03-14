@@ -9,7 +9,7 @@ const numPeopleOnMission = {
   10: [3,4,4,5,5]
 }
 
-const sequelize = new Sequelize('Avalon', 'root', '', {
+const sequelize = new Sequelize('Avalon', 'b0b72f32a050ff', '94705387', {
   host: 'localhost',
   dialect: 'mysql'
 });
